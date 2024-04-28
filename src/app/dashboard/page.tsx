@@ -1,14 +1,23 @@
 import CountCard from "@/components/CountCard";
-import { Table, TableBody, TableCell, TableHead, TableRow } from "@mui/material";
+import Status from "@/components/Status";
+import STATUS from "@/enums/status";
+import { DashboardTableCell } from "@/styles/CustomMUI/custom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 import React from "react";
 
 type Props = {};
 
 const Page = (props: Props) => {
+  const HEADERS = ["Slot", "Number Plate", "Wash Type", "Duration", "Status"];
 
-  const HEADERS = ['Slot', 'Number Plate', 'Wash Type', 'Duration', 'Status']
   return (
-    <div className="h-full flex flex-col space-y-4">
+    <div className="h-full flex flex-col space-y-4 p-4">
       <div className="flex flex-row justify-around space-x-6 h-1/3">
         <CountCard count={3} outOf={12} label="Total Bookings" />
         <CountCard count={2} label="Pending Bookings" />
@@ -16,21 +25,30 @@ const Page = (props: Props) => {
         <CountCard count={4} label="Completed Bookings" />
       </div>
       <div className="w-full h-2/3">
-        <Table>
-          <TableHead>
+        <Table sx={{ borderRadius: 2, overflow: "hidden" }}>
+          <TableHead sx={{ backgroundColor: "primary.main" }}>
             <TableRow>
-              {HEADERS.map((header) => <TableCell>Slot</TableCell>)}
+              {HEADERS.map((header, index) => (
+                <TableCell
+                  key={index}
+                  sx={{ color: "white", textAlign: "center", fontWeight: 600 }}
+                >
+                  {header}
+                </TableCell>
+              ))}
             </TableRow>
-            <TableBody>
-              <TableRow>
-                <TableCell>Slot 1</TableCell>
-                <TableCell>CAB - 9367</TableCell>
-                <TableCell>Wash & Service</TableCell>
-                <TableCell>30M</TableCell>
-                <TableCell>Pending</TableCell>
-              </TableRow>
-            </TableBody>
           </TableHead>
+          <TableBody>
+            <TableRow>
+              <DashboardTableCell>Slot 1</DashboardTableCell>
+              <DashboardTableCell>CAB - 9367</DashboardTableCell>
+              <DashboardTableCell>Wash & Service</DashboardTableCell>
+              <DashboardTableCell>30M</DashboardTableCell>
+              <DashboardTableCell>
+                <Status status={STATUS.ACTIVE} />
+              </DashboardTableCell>
+            </TableRow>
+          </TableBody>
         </Table>
       </div>
     </div>

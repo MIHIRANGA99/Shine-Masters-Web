@@ -1,5 +1,7 @@
 import { createTheme } from "@mui/material";
 
+export const authTheme = createTheme({});
+
 const mainTheme = createTheme({
   palette: {
     error: { main: "#B40000" },
