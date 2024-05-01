@@ -1,7 +1,12 @@
+"use client"
 import CountCard from "@/components/CountCard";
 import Status from "@/components/Status";
 import STATUS from "@/enums/status";
+import { database } from "@/firebase/config";
+import { getDataFromCollection } from "@/firebase/utils";
+import useCurrentUser from "@/hooks/useCurrentUser";
 import { DashboardTableCell } from "@/styles/CustomMUI/custom";
+import { getReference } from "@/utils/getReference";
 import {
   Table,
   TableBody,
@@ -9,12 +14,24 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import React from "react";
+import { collection, collectionGroup, doc, onSnapshot, query, where } from "firebase/firestore";
+import React, { useEffect } from "react";
 
 type Props = {};
 
 const Page = (props: Props) => {
   const HEADERS = ["Slot", "Number Plate", "Wash Type", "Duration", "Status"];
+  const user = useCurrentUser();
+
+  useEffect(() => {
+    console.log(user);
+    if (user) {
+      const q = query(collectionGroup(database, "bookings"), where("isActive", "==", true))
+      onSnapshot(q, (snapshot) => {
+        console.log(snapshot.docs.map(doc => doc.data()));
+      })
+    }
+  }, [user]);
 
   return (
     <div className="h-full flex flex-col space-y-4 p-4">
