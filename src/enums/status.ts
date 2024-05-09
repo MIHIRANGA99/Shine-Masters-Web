@@ -1,8 +1,11 @@
 enum STATUS {
-  PENDING = "pending",
-  ACTIVE = "active",
-  ERROR = "error",
-  COMPLETED = "completed",
+  pending = "pending",
+  active = "active",
+  error = "error",
+  completed = "completed",
+  missed = "missed"
 }
+
+export type TStatus = keyof typeof STATUS;
 
 export default STATUS;

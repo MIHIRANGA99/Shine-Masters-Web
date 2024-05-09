@@ -42,7 +42,6 @@ const MainLayout = (props: Props) => {
           </div>
           <div className="h-[90%]">{props.children}</div>
         </div>
-        <Snackbar open />
       </>
     </ThemeProvider>
   );

@@ -63,13 +63,13 @@ const ServiceModal = (props: Props) => {
         methods.reset();
         props.onClose();
       }}
-      className="justify-center items-center h-full flex flex-col"
+      className="justify-center backdrop-blur-xl items-center h-full flex flex-col"
     >
       <Grow in={props.open}>
-        <div className="shadow-lg shadow-black-100 bg-gradient-to-b from-primary/10 rounded-2xl from-blue-10 backdrop-blur-xl p-7 flex flex-col space-y-3 w-2/5">
+        <div className="shadow-lg shadow-black-100 bg-gradient-to-b from-secondary/50 to-primary/45 rounded-2xl from-blue-10 backdrop-blur-xl p-7 flex flex-col space-y-3 w-2/5">
           <Typography
             textAlign="center"
-            className="font-bold text-2xl py-2 text-blue-500"
+            className="font-bold text-2xl py-2 text-white"
           >
             Create a Service
           </Typography>

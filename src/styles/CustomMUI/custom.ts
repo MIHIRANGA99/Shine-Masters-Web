@@ -21,6 +21,8 @@ export const MUITextField = styled(TextField)({});
 export const DashboardTableCell = styled(TableCell)({
   textAlign: "center",
   fontWeight: 600,
+  justifyContent: "center",
+  alignItems: "center",
 });
 
 export const StatusTypo = styled(Typography)({
