@@ -1,8 +1,11 @@
+"use client"
 import { auth } from "@/firebase/config";
 import { User, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const useCurrentUser = () => {
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -10,10 +13,10 @@ const useCurrentUser = () => {
       if (user) {
         setUser(user);
       } else {
-        console.log("user is logged out");
+        router.replace("/auth/login");
       }
     });
-  }, []);
+  }, [router]);
 
   return user;
 };

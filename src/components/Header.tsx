@@ -1,3 +1,4 @@
+import { logoutUser } from "@/firebase/utils";
 import { MUIButton } from "@/styles/CustomMUI/custom";
 import { NavItem } from "@/types/NavItem";
 import { Box, Button, Fade } from "@mui/material";
@@ -33,7 +34,7 @@ const Header = (props: Props) => {
               Edit Profile
             </button>
             <text className="text-white/50">|</text>
-            <button className=" text-white/50 text-base text-center hover:text-red-800 hover:duration-300">
+            <button onClick={() => logoutUser()} className=" text-white/50 text-base text-center hover:text-red-800 hover:duration-300">
               Logout
             </button>
           </div>

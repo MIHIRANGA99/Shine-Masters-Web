@@ -5,9 +5,10 @@ import { loginUser } from "@/firebase/utils";
 import { MUIButton, MUITextField } from "@/styles/CustomMUI/custom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Typography } from "@mui/material";
+import Lottie from "lottie-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { object, string } from "yup";
 
@@ -37,15 +38,20 @@ const Login = (props: Props) => {
     },
   });
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const onSubmit = (data: TLogin) => {
+    setLoading(true);
     loginUser(
       data.email,
       data.password,
       () => {
         router.replace("/dashboard");
+        setLoading(false);
       },
       (err) => {
         console.error(err);
+        setLoading(false);
       }
     );
   };
@@ -67,8 +73,13 @@ const Login = (props: Props) => {
             <RHFTextField type="email" label="E-mail Address" name="email" />
             <RHFTextField type="password" label="Password" name="password" />
             <div className="flex justify-end">
-              <MUIButton type="submit" variant="contained">
-                Login
+              <MUIButton disabled = {loading} type="submit" variant="contained">
+                <span className="h-8 flex justify-center items-center">
+                  {loading? <Lottie
+                    className="w-24"
+                    animationData={require("@/lotties/loader.json")}
+                  />: 'Login'}
+                </span>
               </MUIButton>
             </div>
           </form>

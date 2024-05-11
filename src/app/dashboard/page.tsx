@@ -9,6 +9,7 @@ import { DashboardTableCell } from "@/styles/CustomMUI/custom";
 import filterByStatus from "@/utils/filterByStatus";
 import { getReference } from "@/utils/getReference";
 import {
+  Box,
   Fade,
   Table,
   TableBody,
@@ -27,6 +28,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import Lottie from "lottie-react";
 import React, { useEffect, useState } from "react";
 
 type Props = {};
@@ -36,15 +38,16 @@ const Page = (props: Props) => {
   const user = useCurrentUser();
 
   const [bookings, setBookings] = useState<DocumentData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(user);
+    setLoading(true);
     if (user) {
       const q = query(
         collectionGroup(database, "bookings"),
         where("isActive", "==", true),
-        where("location", "==", user.uid),
-        orderBy("status", 'asc')
+        where("location", "==", user.uid)
+        // orderBy("status", 'asc')
       );
 
       const qServices = query(
@@ -54,16 +57,29 @@ const Page = (props: Props) => {
       onSnapshot(
         q,
         (snapshot) => {
-          getDocs(qServices).then((res) => {
-            console.log(res.docs.filter((doc) => doc.id === user.uid))
-            setBookings(snapshot.docs.map((doc) => {
-              return {...doc.data(), service: res.docs.filter((service) => service.id === doc.data().serviceType)[0].data()}
-            }));
-          }).catch((err) => {
-            console.error(err)
-          });
+          getDocs(qServices)
+            .then((res) => {
+              setBookings(
+                snapshot.docs.map((doc) => {
+                  setLoading(false);
+                  return {
+                    ...doc.data(),
+                    service: res.docs
+                      .filter(
+                        (service) => service.id === doc.data().serviceType
+                      )[0]
+                      .data(),
+                  };
+                })
+              );
+            })
+            .catch((err) => {
+              setLoading(false);
+              console.error(err);
+            });
         },
         (err) => {
+          setLoading(false);
           console.error(err);
         }
       );
@@ -73,10 +89,27 @@ const Page = (props: Props) => {
   return (
     <div className="h-full flex flex-col space-y-4 p-4">
       <div className="flex flex-row justify-around space-x-6 h-1/3">
-        <CountCard count={bookings.length} outOf={12} label="Total Bookings" />
-        <CountCard count={filterByStatus(bookings, STATUS.pending).length} label="Pending Bookings" />
-        <CountCard count={filterByStatus(bookings, STATUS.missed).length} label="Missed Bookings" />
-        <CountCard count={filterByStatus(bookings, STATUS.completed).length} label="Completed Bookings" />
+        <CountCard
+          loading={loading}
+          count={bookings.length}
+          outOf={12}
+          label="Total Bookings"
+        />
+        <CountCard
+          loading={loading}
+          count={filterByStatus(bookings, STATUS.pending).length}
+          label="Pending Bookings"
+        />
+        <CountCard
+          loading={loading}
+          count={filterByStatus(bookings, STATUS.missed).length}
+          label="Missed Bookings"
+        />
+        <CountCard
+          loading={loading}
+          count={filterByStatus(bookings, STATUS.completed).length}
+          label="Completed Bookings"
+        />
       </div>
       <div className="w-full h-2/3">
         <Table sx={{ borderRadius: 2, overflow: "hidden" }}>
@@ -92,23 +125,80 @@ const Page = (props: Props) => {
               ))}
             </TableRow>
           </TableHead>
-          <TableBody>
-            {bookings.map((booking, index) => (
-              <Fade in timeout={1000 + (1000 * index)}>
-                <TableRow className={booking.status === STATUS.active? "bg-gradient-to-tr from-primary to-secondary duration-1000 transition-all": "duration-1000"}>
-                <DashboardTableCell sx={{color: booking.status === STATUS.active ?'white': 'primary'}}>{`Slot ${booking.slotNumber}`}</DashboardTableCell>
-                <DashboardTableCell sx={{color: booking.status === STATUS.active ?'white': 'primary'}}>{booking.vehicleNumber}</DashboardTableCell>
-                <DashboardTableCell sx={{color: booking.status === STATUS.active ?'white': 'primary'}}>
-                  {booking.service.name}
-                </DashboardTableCell>
-                <DashboardTableCell sx={{color: booking.status === STATUS.active ?'white': 'primary'}}>{`${booking.service.duration}M`}</DashboardTableCell>
-                <DashboardTableCell sx={{color: booking.status === STATUS.active ?'white': 'primary', justifyContent: 'center'}}>
-                  <Status status={booking.status} />
-                </DashboardTableCell>
+          {!loading ? (
+            <TableBody>
+              {bookings.map((booking, index) => (
+                <Fade in timeout={1000 + 1000 * index}>
+                  <TableRow
+                    className={
+                      booking.status === STATUS.active
+                        ? "bg-gradient-to-tr from-primary to-secondary duration-1000 transition-all"
+                        : "duration-1000"
+                    }
+                  >
+                    <DashboardTableCell
+                      sx={{
+                        color:
+                          booking.status === STATUS.active
+                            ? "white"
+                            : "primary",
+                      }}
+                    >{`Slot ${booking.slotNumber}`}</DashboardTableCell>
+                    <DashboardTableCell
+                      sx={{
+                        color:
+                          booking.status === STATUS.active
+                            ? "white"
+                            : "primary",
+                      }}
+                    >
+                      {booking.vehicleNumber}
+                    </DashboardTableCell>
+                    <DashboardTableCell
+                      sx={{
+                        color:
+                          booking.status === STATUS.active
+                            ? "white"
+                            : "primary",
+                      }}
+                    >
+                      {booking.service.name}
+                    </DashboardTableCell>
+                    <DashboardTableCell
+                      sx={{
+                        color:
+                          booking.status === STATUS.active
+                            ? "white"
+                            : "primary",
+                      }}
+                    >{`${booking.service.duration}M`}</DashboardTableCell>
+                    <DashboardTableCell
+                      sx={{
+                        color:
+                          booking.status === STATUS.active
+                            ? "white"
+                            : "primary",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Status status={booking.status} />
+                    </DashboardTableCell>
+                  </TableRow>
+                </Fade>
+              ))}
+            </TableBody>
+          ) : (
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <Lottie
+                    className="h-56"
+                    animationData={require("@/lotties/loader.json")}
+                  />
+                </TableCell>
               </TableRow>
-              </Fade>
-            ))}
-          </TableBody>
+            </TableBody>
+          )}
         </Table>
       </div>
     </div>
